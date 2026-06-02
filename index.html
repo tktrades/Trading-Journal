@@ -741,9 +741,9 @@
           <div class="stat-sub">risk / reward</div>
         </div>
         <div class="stat-card yellow">
-          <div class="stat-label">Total PnL</div>
-          <div class="stat-value yellow" id="dash-pnl">0</div>
-          <div class="stat-sub">points</div>
+          <div class="stat-label">Total P&L</div>
+          <div class="stat-value yellow" id="dash-pnl">$0.00</div>
+          <div class="stat-sub">profit / loss</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Sessions</div>
@@ -765,10 +765,11 @@
                 <th>MMXM</th>
                 <th>Result</th>
                 <th>RR</th>
+                <th>P&L</th>
               </tr>
             </thead>
             <tbody id="dashboard-trades">
-              <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div><p>No trades logged yet</p></div></td></tr>
+              <tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📊</div><p>No trades logged yet</p></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -797,12 +798,13 @@
                 <th>MMXM</th>
                 <th>Result</th>
                 <th>RR</th>
+                <th>P&L</th>
                 <th>Chart</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="trade-table">
-              <tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📒</div><p>No trades yet. Hit + New Trade to get started.</p></div></td></tr>
+              <tr><td colspan="10"><div class="empty-state"><div class="empty-icon">📒</div><p>No trades yet. Hit + New Trade to get started.</p></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -881,93 +883,39 @@
           <div class="page-sub">RUN THROUGH EVERY BOX BEFORE ENTERING</div>
         </div>
         <div style="display:flex;gap:10px;align-items:center">
-          <span id="checklist-progress-text" style="font-size:12px;font-family:var(--font-mono);color:var(--text3)">0 / 10</span>
+          <span id="checklist-progress-text" style="font-size:12px;font-family:var(--font-mono);color:var(--text3)">0 / 0</span>
+          <button class="btn btn-ghost btn-sm" id="edit-checklist-btn" onclick="toggleChecklistEdit()">✏️ Edit</button>
           <button class="btn btn-ghost btn-sm" onclick="resetChecklist()">Reset</button>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
-        <div>
-          <div class="card">
-            <div class="checklist-section">
-              <div class="checklist-section-title">🔭 Session Prep</div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I know which session I am trading</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I have identified the higher timeframe narrative</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I have identified key levels — highs, lows, liquidity pools</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I have identified a MMXM</label>
-              </div>
-            </div>
+      <div id="checklist-edit-banner" style="display:none;background:var(--accent-glow);border:1px solid rgba(45,90,173,0.3);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;font-size:12px;font-family:var(--font-mono);color:var(--accent-light);align-items:center;justify-content:space-between">
+        <span>✏️ Edit mode — add, remove, or rename sections and items. Changes save automatically.</span>
+        <button class="btn btn-primary btn-sm" onclick="toggleChecklistEdit()">Done Editing</button>
+      </div>
 
-            <div class="checklist-section">
-              <div class="checklist-section-title">📐 Model Confirmation</div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I can identify which MMXM is playing out — Buy or Sell</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I have identified HTF Target — Liquidity or Inefficiency</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I know which side of the MMXM we are on</label>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="checklist-sections-container"></div>
 
-        <div>
-          <div class="card">
-            <div class="checklist-section">
-              <div class="checklist-section-title">🎯 Trade Parameters</div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>Risk/Reward Ratio is 2+</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I know how many contracts I will be using</label>
-              </div>
-            </div>
+      <div id="add-section-wrap" style="display:none;margin-top:16px">
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;border-style:dashed" onclick="addChecklistSection()">+ Add Section</button>
+      </div>
 
-            <div class="checklist-section">
-              <div class="checklist-section-title">🧠 Psychology Check</div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I am not trading to recover a loss</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I am not forcing a trade out of boredom or FOMO</label>
-              </div>
-              <div class="checklist-item" onclick="toggleCheck(this)">
-                <input type="checkbox" onclick="event.stopPropagation();toggleCheck(this.parentElement)">
-                <label>I am calm, focused, and following my model — not my emotions</label>
-              </div>
-            </div>
-
-            <div class="progress-bar-wrap" style="margin-top:16px">
-              <div class="progress-bar" id="checklist-bar" style="width:0%"></div>
-            </div>
-
-            <div class="checklist-warning" id="checklist-warn">
-              ⚠️ If you can't check every box — don't take the trade.
-            </div>
-          </div>
+      <div style="margin-top:20px;padding-bottom:80px">
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="checklist-bar" style="width:0%"></div>
         </div>
       </div>
     </div>
+
+    <!-- STICKY CHECKLIST WARNING -->
+    <div id="checklist-warn" style="position:fixed;bottom:0;left:220px;right:0;z-index:200;background:rgba(10,15,26,0.97);border-top:1px solid rgba(239,68,68,0.3);padding:14px 40px;font-size:12px;font-family:var(--font-mono);color:var(--red);display:flex;align-items:center;justify-content:space-between;gap:12px;backdrop-filter:blur(8px)">
+      <span id="checklist-warn-text">⚠️ If you can't check every box — don't take the trade.</span>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="progress-bar-wrap" style="width:200px;margin:0"><div class="progress-bar" id="checklist-bar" style="width:0%"></div></div>
+        <span id="checklist-progress-text-bar" style="color:var(--text3);white-space:nowrap">0 / 0</span>
+      </div>
+    </div>
+
 
     <!-- RULES & MODEL -->
     <div class="page" id="page-rules">
@@ -1105,9 +1053,15 @@
           </select>
         </div>
       </div>
-      <div class="form-group" style="margin-bottom:16px">
-        <label class="form-label">RR Achieved</label>
-        <input type="number" id="t-rr" placeholder="0.00" step="0.01">
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group">
+          <label class="form-label">RR Achieved</label>
+          <input type="number" id="t-rr" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">P&L ($)</label>
+          <input type="number" id="t-pnl" placeholder="e.g. 240.00 or -120.00" step="0.01">
+        </div>
       </div>
       <div class="form-group" style="margin-bottom:16px">
         <label class="form-label">Confluence</label>
@@ -1151,6 +1105,9 @@
     el.classList.add('active');
     if (id === 'dashboard') updateDashboard();
     if (id === 'rules') loadRules();
+    if (id === 'checklist') renderChecklist();
+    const stickyBar = document.getElementById('checklist-warn');
+    if (stickyBar) stickyBar.style.display = id === 'checklist' ? 'flex' : 'none';
   }
 
   function updateDashboard() {
@@ -1170,7 +1127,9 @@
     document.getElementById('dash-losses').textContent = losses;
     document.getElementById('dash-be').textContent = bes;
     document.getElementById('dash-rr').textContent = avgRR;
-    document.getElementById('dash-pnl').textContent = (totalPnL >= 0 ? '+' : '') + totalPnL;
+    const pnlEl = document.getElementById('dash-pnl');
+    pnlEl.textContent = (totalPnL >= 0 ? '+$' : '-$') + Math.abs(totalPnL).toFixed(2);
+    pnlEl.className = 'stat-value ' + (totalPnL >= 0 ? 'green' : 'red');
     document.getElementById('dash-sessions').textContent = londonCount + ' / ' + nyamCount;
 
     const circle = document.getElementById('wr-circle');
@@ -1181,9 +1140,12 @@
     const tbody = document.getElementById('dashboard-trades');
     const recent = [...trades].reverse().slice(0, 8);
     if (recent.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div><p>No trades logged yet</p></div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📊</div><p>No trades logged yet</p></div></td></tr>';
     } else {
-      tbody.innerHTML = recent.map(t => `
+      tbody.innerHTML = recent.map(t => {
+        const pnl = parseFloat(t.pnl);
+        const pnlStr = isNaN(pnl) || t.pnl === '' || t.pnl == null ? '—' : `<span style="color:${pnl >= 0 ? 'var(--green)' : 'var(--red)'}">${pnl >= 0 ? '+$' : '-$'}${Math.abs(pnl).toFixed(2)}</span>`;
+        return `
         <tr>
           <td>${t.name}</td>
           <td>${t.date}</td>
@@ -1192,8 +1154,9 @@
           <td style="font-size:11px;color:var(--text3)">${t.model}</td>
           <td><span class="badge ${t.result === 'Win' ? 'badge-win' : t.result === 'Loss' ? 'badge-loss' : 'badge-be'}">${t.result}</span></td>
           <td>${t.rr || '—'}</td>
+          <td>${pnlStr}</td>
         </tr>
-      `).join('');
+      `}).join('');
     }
   }
 
@@ -1203,7 +1166,10 @@
       tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📒</div><p>No trades yet. Hit + New Trade to get started.</p></div></td></tr>';
       return;
     }
-    tbody.innerHTML = [...trades].reverse().map(t => `
+    tbody.innerHTML = [...trades].reverse().map(t => {
+      const pnl = parseFloat(t.pnl);
+      const pnlStr = isNaN(pnl) || t.pnl === '' || t.pnl == null ? '—' : `<span style="color:${pnl >= 0 ? 'var(--green)' : 'var(--red)'}">${pnl >= 0 ? '+$' : '-$'}${Math.abs(pnl).toFixed(2)}</span>`;
+      return `
       <tr>
         <td>${t.name}</td>
         <td>${t.date}</td>
@@ -1212,10 +1178,11 @@
         <td style="font-size:11px;color:var(--text3)">${t.model}</td>
         <td><span class="badge ${t.result === 'Win' ? 'badge-win' : t.result === 'Loss' ? 'badge-loss' : 'badge-be'}">${t.result}</span></td>
         <td>${t.rr || '—'}</td>
+        <td>${pnlStr}</td>
         <td>${t.screenshot ? `<img src="${t.screenshot}" class="screenshot-thumb" onclick="viewScreenshot('${t.id}')">` : '—'}</td>
         <td><button class="btn btn-danger btn-sm" onclick="deleteTrade('${t.id}')">✕</button></td>
       </tr>
-    `).join('');
+    `}).join('');
   }
 
   function openTradeModal() {
@@ -1227,6 +1194,7 @@
     document.getElementById('t-model').value = '';
     document.getElementById('t-result').value = '';
     document.getElementById('t-rr').value = '';
+    document.getElementById('t-pnl').value = '';
     document.getElementById('t-confluence').value = '';
     document.getElementById('t-improvements').value = '';
     document.getElementById('screenshot-preview').style.display = 'none';
@@ -1266,7 +1234,7 @@
       model: document.getElementById('t-model').value,
       result,
       rr: document.getElementById('t-rr').value,
-      pnl: 0,
+      pnl: document.getElementById('t-pnl').value,
       confluence: document.getElementById('t-confluence').value,
       improvements: document.getElementById('t-improvements').value,
       screenshot: screenshotData
@@ -1360,35 +1328,172 @@
     document.getElementById('review-lesson').value = r.lesson;
   }
 
-  function toggleCheck(item) {
-    const cb = item.querySelector('input[type="checkbox"]');
-    cb.checked = !cb.checked;
-    item.classList.toggle('checked', cb.checked);
+
+  // ─── CHECKLIST DATA ──────────────────────────────────────────────────────
+  const DEFAULT_CHECKLIST = [
+    {
+      id: 'sec1', title: '🔭 Session Prep', items: [
+        { id: 'i1', text: 'I know which session I am trading', checked: false },
+        { id: 'i2', text: 'I have identified the higher timeframe narrative', checked: false },
+        { id: 'i3', text: 'I have identified key levels — highs, lows, liquidity pools', checked: false },
+        { id: 'i4', text: 'I have identified a MMXM', checked: false },
+      ]
+    },
+    {
+      id: 'sec2', title: '📐 Model Confirmation', items: [
+        { id: 'i5', text: 'I can identify which MMXM is playing out — Buy or Sell', checked: false },
+        { id: 'i6', text: 'I have identified HTF Target — Liquidity or Inefficiency', checked: false },
+        { id: 'i7', text: 'I know which side of the MMXM we are on', checked: false },
+      ]
+    },
+    {
+      id: 'sec3', title: '🎯 Trade Parameters', items: [
+        { id: 'i8', text: 'Risk/Reward Ratio is 2+', checked: false },
+        { id: 'i9', text: 'I know how many contracts I will be using', checked: false },
+      ]
+    },
+    {
+      id: 'sec4', title: '🧠 Psychology Check', items: [
+        { id: 'i10', text: 'I am not trading to recover a loss', checked: false },
+        { id: 'i11', text: 'I am not forcing a trade out of boredom or FOMO', checked: false },
+        { id: 'i12', text: 'I am calm, focused, and following my model — not my emotions', checked: false },
+      ]
+    }
+  ];
+
+  let checklistData = JSON.parse(localStorage.getItem('tj_checklist') || 'null') || JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+  let checklistEditMode = false;
+
+  function saveChecklistData() {
+    localStorage.setItem('tj_checklist', JSON.stringify(checklistData));
+  }
+
+  function renderChecklist() {
+    const container = document.getElementById('checklist-sections-container');
+    const editMode = checklistEditMode;
+
+    container.innerHTML = checklistData.map((section, si) => `
+      <div class="card" style="margin-bottom:16px" id="cl-sec-${section.id}">
+        <div class="checklist-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+            ${editMode
+              ? `<input type="text" value="${section.title}" onchange="renameSectionTitle(${si}, this.value)"
+                  style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;color:var(--text);font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;flex:1;margin-right:10px">`
+              : `<div class="checklist-section-title" style="margin:0;border:none;padding:0">${section.title}</div>`
+            }
+            ${editMode ? `<button class="btn btn-danger btn-sm" onclick="deleteSection(${si})" style="padding:4px 10px;font-size:11px">✕ Remove Section</button>` : ''}
+          </div>
+          ${section.items.map((item, ii) => `
+            <div class="checklist-item ${item.checked ? 'checked' : ''}" id="cl-item-${item.id}"
+              ${editMode ? '' : `onclick="toggleCheckById('${section.id}','${item.id}')"`}>
+              ${editMode
+                ? `<div style="display:flex;align-items:center;gap:10px;width:100%;padding:4px 0">
+                    <input type="text" value="${item.text}" onchange="renameItem(${si},${ii},this.value)"
+                      style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:7px 12px;color:var(--text);font-family:var(--font-mono);font-size:12px">
+                    <button class="btn btn-danger btn-sm" onclick="deleteItem(${si},${ii})" style="padding:4px 10px;font-size:11px;white-space:nowrap">✕</button>
+                  </div>`
+                : `<input type="checkbox" ${item.checked ? 'checked' : ''}
+                    onclick="event.stopPropagation();toggleCheckById('${section.id}','${item.id}')">
+                   <label>${item.text}</label>`
+              }
+            </div>
+          `).join('')}
+          ${editMode ? `<button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;justify-content:center;border-style:dashed;font-size:12px" onclick="addItemToSection(${si})">+ Add Item</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+
     updateChecklistProgress();
+  }
+
+  function toggleChecklistEdit() {
+    checklistEditMode = !checklistEditMode;
+    const btn = document.getElementById('edit-checklist-btn');
+    const banner = document.getElementById('checklist-edit-banner');
+    const addWrap = document.getElementById('add-section-wrap');
+    btn.textContent = checklistEditMode ? '✅ Done' : '✏️ Edit';
+    banner.style.display = checklistEditMode ? 'flex' : 'none';
+    addWrap.style.display = checklistEditMode ? 'block' : 'none';
+    renderChecklist();
+  }
+
+  function toggleCheckById(secId, itemId) {
+    const sec = checklistData.find(s => s.id === secId);
+    if (!sec) return;
+    const item = sec.items.find(i => i.id === itemId);
+    if (!item) return;
+    item.checked = !item.checked;
+    saveChecklistData();
+    renderChecklist();
+  }
+
+  function renameSectionTitle(si, val) {
+    checklistData[si].title = val;
+    saveChecklistData();
+  }
+
+  function renameItem(si, ii, val) {
+    checklistData[si].items[ii].text = val;
+    saveChecklistData();
+  }
+
+  function deleteSection(si) {
+    if (checklistData.length <= 1) { showToast('Must have at least one section', 'error'); return; }
+    checklistData.splice(si, 1);
+    saveChecklistData();
+    renderChecklist();
+  }
+
+  function deleteItem(si, ii) {
+    checklistData[si].items.splice(ii, 1);
+    saveChecklistData();
+    renderChecklist();
+  }
+
+  function addItemToSection(si) {
+    checklistData[si].items.push({ id: 'i' + Date.now(), text: 'New checklist item', checked: false });
+    saveChecklistData();
+    renderChecklist();
+  }
+
+  function addChecklistSection() {
+    checklistData.push({ id: 'sec' + Date.now(), title: '✏️ New Section', items: [
+      { id: 'i' + Date.now(), text: 'New checklist item', checked: false }
+    ]});
+    saveChecklistData();
+    renderChecklist();
+  }
+
+  function toggleCheck(item) {
+    // legacy fallback — not used in dynamic mode
   }
 
   function updateChecklistProgress() {
-    const total = document.querySelectorAll('.checklist-item').length;
-    const checked = document.querySelectorAll('.checklist-item.checked').length;
-    const pct = Math.round((checked / total) * 100);
-    document.getElementById('checklist-bar').style.width = pct + '%';
-    document.getElementById('checklist-bar').className = 'progress-bar ' + (pct === 100 ? 'green' : pct > 50 ? '' : 'red');
-    document.getElementById('checklist-progress-text').textContent = checked + ' / ' + total;
-    document.getElementById('checklist-warn').innerHTML = pct === 100
-      ? '✅ All checks passed — you are clear to trade.'
-      : '⚠️ If you can\'t check every box — don\'t take the trade.';
-    document.getElementById('checklist-warn').style.color = pct === 100 ? 'var(--green)' : 'var(--red)';
+    const allItems = checklistData.flatMap(s => s.items);
+    const total = allItems.length;
+    const checked = allItems.filter(i => i.checked).length;
+    const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+    const bar = document.getElementById('checklist-bar');
+    if (bar) { bar.style.width = pct + '%'; bar.className = 'progress-bar ' + (pct === 100 ? 'green' : pct > 50 ? '' : 'red'); }
+    const prog = document.getElementById('checklist-progress-text');
+    if (prog) prog.textContent = checked + ' / ' + total;
+    const progBar = document.getElementById('checklist-progress-text-bar');
+    if (progBar) progBar.textContent = checked + ' / ' + total;
+    const warnText = document.getElementById('checklist-warn-text');
+    const warn = document.getElementById('checklist-warn');
+    const msg = pct === 100 ? '✅ All checks passed — you are clear to trade.' : "⚠️ If you can't check every box — don't take the trade.";
+    if (warnText) warnText.textContent = msg;
+    if (warn) warn.style.color = pct === 100 ? 'var(--green)' : 'var(--red)';
   }
 
   function resetChecklist() {
-    document.querySelectorAll('.checklist-item').forEach(item => {
-      item.classList.remove('checked');
-      item.querySelector('input[type="checkbox"]').checked = false;
-    });
-    updateChecklistProgress();
+    checklistData.forEach(s => s.items.forEach(i => i.checked = false));
+    saveChecklistData();
+    renderChecklist();
   }
 
-  function saveRules() {
+
+    function saveRules() {
     rules = {
       instrument: document.getElementById('rules-instrument').value,
       session1: document.getElementById('rules-session1').value,
@@ -1434,6 +1539,8 @@
   renderReviewArchive();
   loadRules();
   updateDashboard();
+  renderChecklist();
+  document.getElementById('checklist-warn').style.display = 'none';
 </script>
 </body>
 </html>
