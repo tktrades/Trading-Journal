@@ -656,7 +656,7 @@
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-text">Trading Journal</div>
-      <div class="logo-sub">NQ · ICT · MMXM</div>
+      
     </div>
     <nav class="nav">
       <div class="nav-item active" onclick="showPage('dashboard', this)">
@@ -673,6 +673,9 @@
       </div>
       <div class="nav-item" onclick="showPage('rules', this)">
         <span class="nav-icon">📖</span> Rules & Model
+      </div>
+      <div class="nav-item" onclick="showPage('monthly', this)">
+        <span class="nav-icon">📆</span> Monthly Tracker
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -742,7 +745,7 @@
         </div>
         <div class="stat-card yellow">
           <div class="stat-label">Total P&L</div>
-          <div class="stat-value yellow" id="dash-pnl">$0.00</div>
+          <div class="stat-value yellow" id="dash-pnl" style="font-size:clamp(14px,2vw,28px);word-break:break-all;line-height:1.2">$0.00</div>
           <div class="stat-sub">profit / loss</div>
         </div>
         <div class="stat-card">
@@ -811,57 +814,51 @@
       </div>
     </div>
 
-    <!-- DAILY REVIEW -->
+        <!-- DAILY REVIEW -->
     <div class="page" id="page-dailyreview">
       <div class="page-header">
         <div>
           <div class="page-title">Daily Review</div>
-          <div class="page-sub">COMPLETE AFTER EVERY SESSION</div>
+          <div class="page-sub" id="review-mode-label">COMPLETE AFTER EVERY SESSION</div>
         </div>
-        <button class="btn btn-primary" onclick="saveReview()">Save Review</button>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" id="new-review-btn" onclick="newReview()" style="display:none">+ New Review</button>
+          <button class="btn btn-danger btn-sm" id="delete-review-btn" onclick="deleteCurrentReview()" style="display:none;align-items:center">🗑 Delete</button>
+          <button class="btn btn-primary" onclick="saveReview()">Save Review</button>
+        </div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 300px;gap:24px">
         <div>
           <div class="card">
-            <div class="form-grid" style="margin-bottom:20px">
-              <div class="form-group">
-                <label class="form-label">Date</label>
-                <input type="date" id="review-date">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Session</label>
-                <select id="review-session">
-                  <option value="">Select session</option>
-                  <option value="London">London (4:00pm – 7:00pm)</option>
-                  <option value="New York AM">New York AM (11:30pm – 1:00am)</option>
-                </select>
-              </div>
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Date</label>
+              <input type="date" id="review-date">
             </div>
 
             <div class="review-section">
-              <div class="review-label">👁 What did I see?</div>
-              <textarea id="review-saw" placeholder="What was price doing? Could you identify the narrative?"></textarea>
+              <div class="review-label">📋 Did I follow my pre-trade checklist?</div>
+              <textarea id="review-saw" placeholder="Did you run through every box before entering? Were there any items you skipped or rushed?"></textarea>
             </div>
 
             <div class="review-section">
-              <div class="review-label">✅ What played out?</div>
-              <textarea id="review-played" placeholder="Did the narrative play out as expected? Where did price go after your observation?"></textarea>
+              <div class="review-label">📐 Did I follow my rules and model?</div>
+              <textarea id="review-played" placeholder="Did you stick to your trading rules? Was the model clear before you entered? Any deviations?"></textarea>
             </div>
 
             <div class="review-section">
-              <div class="review-label">💪 What did I do well?</div>
-              <textarea id="review-well" placeholder="Be honest and specific."></textarea>
+              <div class="review-label">🧠 How was my psychology today?</div>
+              <textarea id="review-well" placeholder="Were you calm and focused? Did emotions influence any decisions? Did you feel rushed, revengeful or bored?"></textarea>
             </div>
 
             <div class="review-section">
-              <div class="review-label">🔧 What do I need to improve?</div>
-              <textarea id="review-improve" placeholder="Be honest and specific."></textarea>
+              <div class="review-label">🔍 What did I observe in the market today?</div>
+              <textarea id="review-improve" placeholder="What was price doing across the sessions? Did the narrative make sense? What PD arrays or liquidity levels stood out?"></textarea>
             </div>
 
             <div class="review-section">
-              <div class="review-label">🧠 Key lesson from today</div>
-              <textarea id="review-lesson" placeholder="One thing you will take into tomorrow."></textarea>
+              <div class="review-label">🧩 What is one thing I am taking into tomorrow?</div>
+              <textarea id="review-lesson" placeholder="One insight, adjustment or intention to carry forward into the next session."></textarea>
             </div>
           </div>
         </div>
@@ -916,6 +913,67 @@
       </div>
     </div>
 
+
+    <!-- MONTHLY TRACKER -->
+    <div class="page" id="page-monthly">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Monthly Tracker</div>
+          <div class="page-sub" id="monthly-label">TRADING PERFORMANCE CALENDAR</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">&#8592;</button>
+          <span id="monthly-title" style="font-family:var(--font-mono);font-size:13px;color:var(--text);min-width:140px;text-align:center"></span>
+          <button class="btn btn-ghost btn-sm" onclick="changeMonth(1)">&#8594;</button>
+        </div>
+      </div>
+
+      <!-- MONTHLY STATS ROW -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px">
+        <div class="stat-card green">
+          <div class="stat-label">Trading Days</div>
+          <div class="stat-value" id="m-days">0</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Win Days</div>
+          <div class="stat-value green" id="m-win-days">0</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Loss Days</div>
+          <div class="stat-value red" id="m-loss-days">0</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Monthly P&L</div>
+          <div class="stat-value yellow" id="m-pnl" style="font-size:clamp(14px,2vw,28px);word-break:break-all;line-height:1.2">$0.00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Trades</div>
+          <div class="stat-value" id="m-trades">0</div>
+        </div>
+      </div>
+
+      <!-- CALENDAR GRID -->
+      <div class="card" style="padding:20px">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px">
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">MON</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">TUE</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">WED</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">THU</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">FRI</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">SAT</div>
+          <div style="text-align:center;font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:6px 0">SUN</div>
+        </div>
+        <div id="monthly-calendar-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
+      </div>
+
+      <!-- LEGEND -->
+      <div style="display:flex;gap:20px;margin-top:16px;align-items:center;font-size:11px;font-family:var(--font-mono);color:var(--text3)">
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:3px;background:rgba(34,197,94,0.25);border:1px solid rgba(34,197,94,0.4)"></div> Profit day</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:3px;background:rgba(239,68,68,0.25);border:1px solid rgba(239,68,68,0.4)"></div> Loss day</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:3px;background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.3)"></div> Breakeven</div>
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:3px;background:var(--bg3);border:1px solid var(--border)"></div> No trade</div>
+      </div>
+    </div>
 
     <!-- RULES & MODEL -->
     <div class="page" id="page-rules">
@@ -1021,8 +1079,10 @@
           <label class="form-label">Session</label>
           <select id="t-session">
             <option value="">Select</option>
+            <option value="Asia">Asia</option>
             <option value="London">London</option>
             <option value="New York AM">New York AM</option>
+            <option value="New York PM">New York PM</option>
           </select>
         </div>
         <div class="form-group">
@@ -1039,8 +1099,9 @@
           <label class="form-label">MMXM</label>
           <select id="t-model">
             <option value="">Select</option>
-            <option value="MMBM">MMBM — Market Maker Buy Model</option>
-            <option value="MMSM">MMSM — Market Maker Sell Model</option>
+            <option value="N/A">N/A</option>
+            <option value="MMBM">Market Maker Buy Model</option>
+            <option value="MMSM">Market Maker Sell Model</option>
           </select>
         </div>
         <div class="form-group">
@@ -1106,6 +1167,7 @@
     if (id === 'dashboard') updateDashboard();
     if (id === 'rules') loadRules();
     if (id === 'checklist') renderChecklist();
+    if (id === 'monthly') renderMonthlyTracker();
     const stickyBar = document.getElementById('checklist-warn');
     if (stickyBar) stickyBar.style.display = id === 'checklist' ? 'flex' : 'none';
   }
@@ -1183,6 +1245,7 @@
         <td>${t.screenshot ? `<img src="${t.screenshot}" class="screenshot-thumb" onclick="viewScreenshot('${t.id}')">` : '—'}</td>
         <td style="display:flex;gap:6px;align-items:center">
           ${hasDetails ? `<button class="btn btn-ghost btn-sm" onclick="toggleTradeExpand('${t.id}')" id="expand-btn-${t.id}" style="padding:4px 10px;font-size:11px">▼</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="editTrade('${t.id}')" style="padding:4px 10px;font-size:11px">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteTrade('${t.id}')">✕</button>
         </td>
       </tr>
@@ -1236,6 +1299,8 @@
 
   function closeTradeModal() {
     document.getElementById('trade-modal').classList.remove('open');
+    document.querySelector('#trade-modal .modal-title').textContent = 'New Trade';
+    editingTradeId = null;
   }
 
   function handleScreenshot(e) {
@@ -1292,6 +1357,33 @@
     showToast('Trade deleted', 'error');
   }
 
+  function editTrade(id) {
+    const t = trades.find(tr => tr.id === id);
+    if (!t) return;
+    editingTradeId = id;
+    document.getElementById('t-name').value = t.name || '';
+    document.getElementById('t-date').value = t.date || '';
+    document.getElementById('t-session').value = t.session || '';
+    document.getElementById('t-direction').value = t.direction || '';
+    document.getElementById('t-model').value = t.model || '';
+    document.getElementById('t-result').value = t.result || '';
+    document.getElementById('t-rr').value = t.rr || '';
+    document.getElementById('t-pnl').value = t.pnl || '';
+    document.getElementById('t-confluence').value = t.confluence || '';
+    document.getElementById('t-improvements').value = t.improvements || '';
+    screenshotData = t.screenshot || null;
+    if (screenshotData) {
+      document.getElementById('screenshot-preview').src = screenshotData;
+      document.getElementById('screenshot-preview').style.display = 'block';
+      document.getElementById('upload-zone').style.display = 'none';
+    } else {
+      document.getElementById('screenshot-preview').style.display = 'none';
+      document.getElementById('upload-zone').style.display = 'block';
+    }
+    document.querySelector('#trade-modal .modal-title').textContent = 'Edit Trade';
+    document.getElementById('trade-modal').classList.add('open');
+  }
+
   function viewScreenshot(id) {
     const trade = trades.find(t => t.id === id);
     if (!trade || !trade.screenshot) return;
@@ -1299,15 +1391,15 @@
     win.document.write('<img src="' + trade.screenshot + '" style="max-width:100%;background:#0a0f1a">');
   }
 
+  let editingReviewId = null;
+
   function saveReview() {
     const date = document.getElementById('review-date').value;
-    const session = document.getElementById('review-session').value;
-    if (!date || !session) { showToast('Date and session are required', 'error'); return; }
+    if (!date) { showToast('Date is required', 'error'); return; }
 
     const review = {
-      id: Date.now().toString(),
+      id: editingReviewId || Date.now().toString(),
       date,
-      session,
       saw: document.getElementById('review-saw').value,
       played: document.getElementById('review-played').value,
       well: document.getElementById('review-well').value,
@@ -1315,19 +1407,55 @@
       lesson: document.getElementById('review-lesson').value
     };
 
-    reviews.push(review);
-    localStorage.setItem('tj_reviews', JSON.stringify(reviews));
+    if (editingReviewId) {
+      reviews = reviews.map(r => r.id === editingReviewId ? review : r);
+      showToast('Review updated ✓', 'success');
+    } else {
+      reviews.push(review);
+      editingReviewId = review.id;
+      showToast('Review saved ✓', 'success');
+    }
 
+    localStorage.setItem('tj_reviews', JSON.stringify(reviews));
+    setReviewEditMode(editingReviewId);
+    renderReviewArchive();
+  }
+
+  function newReview() {
+    editingReviewId = null;
     document.getElementById('review-saw').value = '';
     document.getElementById('review-played').value = '';
     document.getElementById('review-well').value = '';
     document.getElementById('review-improve').value = '';
     document.getElementById('review-lesson').value = '';
     document.getElementById('review-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('review-session').value = '';
+    setReviewEditMode(null);
+  }
 
+  function deleteCurrentReview() {
+    if (!editingReviewId) return;
+    reviews = reviews.filter(r => r.id !== editingReviewId);
+    localStorage.setItem('tj_reviews', JSON.stringify(reviews));
     renderReviewArchive();
-    showToast('Review saved ✓', 'success');
+    newReview();
+    showToast('Review deleted', 'error');
+  }
+
+  function setReviewEditMode(id) {
+    const newBtn = document.getElementById('new-review-btn');
+    const delBtn = document.getElementById('delete-review-btn');
+    const label = document.getElementById('review-mode-label');
+    if (id) {
+      newBtn.style.display = 'inline-flex';
+      delBtn.style.display = 'inline-flex';
+      label.textContent = 'EDITING SAVED REVIEW';
+      label.style.color = 'var(--accent-light)';
+    } else {
+      newBtn.style.display = 'none';
+      delBtn.style.display = 'none';
+      label.textContent = 'COMPLETE AFTER EVERY SESSION';
+      label.style.color = '';
+    }
   }
 
   function renderReviewArchive() {
@@ -1350,13 +1478,14 @@
   function viewReview(id) {
     const r = reviews.find(rv => rv.id === id);
     if (!r) return;
+    editingReviewId = id;
     document.getElementById('review-date').value = r.date;
-    document.getElementById('review-session').value = r.session;
-    document.getElementById('review-saw').value = r.saw;
-    document.getElementById('review-played').value = r.played;
-    document.getElementById('review-well').value = r.well;
-    document.getElementById('review-improve').value = r.improve;
-    document.getElementById('review-lesson').value = r.lesson;
+    document.getElementById('review-saw').value = r.saw || '';
+    document.getElementById('review-played').value = r.played || '';
+    document.getElementById('review-well').value = r.well || '';
+    document.getElementById('review-improve').value = r.improve || '';
+    document.getElementById('review-lesson').value = r.lesson || '';
+    setReviewEditMode(id);
   }
 
 
@@ -1524,7 +1653,103 @@
   }
 
 
-    function saveRules() {
+    // ─── MONTHLY TRACKER ─────────────────────────────────────────────────────
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
+
+  function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderMonthlyTracker();
+  }
+
+  function renderMonthlyTracker() {
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('monthly-title').textContent = monthNames[currentMonth] + ' ' + currentYear;
+
+    // Build daily data from trades
+    const dayMap = {};
+    trades.forEach(t => {
+      if (!t.date) return;
+      const d = new Date(t.date);
+      if (d.getMonth() !== currentMonth || d.getFullYear() !== currentYear) return;
+      const key = t.date;
+      if (!dayMap[key]) dayMap[key] = { trades: 0, pnl: 0, results: [] };
+      dayMap[key].trades++;
+      dayMap[key].pnl += parseFloat(t.pnl) || 0;
+      dayMap[key].results.push(t.result);
+    });
+
+    // Monthly stats
+    const days = Object.keys(dayMap);
+    const winDays = days.filter(d => dayMap[d].pnl > 0).length;
+    const lossDays = days.filter(d => dayMap[d].pnl < 0).length;
+    const totalPnl = days.reduce((a, d) => a + dayMap[d].pnl, 0);
+    const totalTrades = days.reduce((a, d) => a + dayMap[d].trades, 0);
+
+    document.getElementById('m-days').textContent = days.length;
+    document.getElementById('m-win-days').textContent = winDays;
+    document.getElementById('m-loss-days').textContent = lossDays;
+    const pnlEl = document.getElementById('m-pnl');
+    pnlEl.textContent = (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toFixed(2);
+    pnlEl.className = 'stat-value ' + (totalPnl > 0 ? 'green' : totalPnl < 0 ? 'red' : 'yellow');
+    document.getElementById('m-trades').textContent = totalTrades;
+
+    // Build calendar
+    const grid = document.getElementById('monthly-calendar-grid');
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const totalDays = lastDay.getDate();
+
+    // Monday=0 offset
+    let startOffset = firstDay.getDay() - 1;
+    if (startOffset < 0) startOffset = 6;
+
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
+    let cells = '';
+
+    // Empty cells before month start
+    for (let i = 0; i < startOffset; i++) {
+      cells += '<div style="min-height:80px"></div>';
+    }
+
+    for (let day = 1; day <= totalDays; day++) {
+      const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+      const data = dayMap[dateStr];
+      const isToday = dateStr === todayStr;
+      const isWeekend = (startOffset + day - 1) % 7 >= 5;
+
+      let bg = 'background:var(--bg3);border:1px solid var(--border)';
+      let pnlStr = '';
+      let tradeStr = '';
+
+      if (data) {
+        const p = data.pnl;
+        if (p > 0) bg = 'background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.35)';
+        else if (p < 0) bg = 'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35)';
+        else bg = 'background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3)';
+        const pnlColor = p > 0 ? 'var(--green)' : p < 0 ? 'var(--red)' : 'var(--yellow)';
+        pnlStr = `<div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:${pnlColor};margin-top:4px">${p >= 0 ? '+$' : '-$'}${Math.abs(p).toFixed(0)}</div>`;
+        tradeStr = `<div style="font-size:10px;color:var(--text3);margin-top:2px">${data.trades} trade${data.trades !== 1 ? 's' : ''}</div>`;
+      }
+
+      const todayBorder = isToday ? 'outline:2px solid var(--accent-light);' : '';
+      const weekendOpacity = isWeekend && !data ? 'opacity:0.4;' : '';
+
+      cells += `<div style="min-height:80px;border-radius:6px;padding:8px;${bg};${todayBorder}${weekendOpacity}">
+        <div style="font-size:11px;font-family:var(--font-mono);color:${isToday ? 'var(--accent-light)' : 'var(--text3)'};font-weight:${isToday ? '700' : '400'}">${day}</div>
+        ${pnlStr}
+        ${tradeStr}
+      </div>`;
+    }
+
+    grid.innerHTML = cells;
+  }
+
+  function saveRules() {
     rules = {
       instrument: document.getElementById('rules-instrument').value,
       session1: document.getElementById('rules-session1').value,
@@ -1572,6 +1797,7 @@
   updateDashboard();
   renderChecklist();
   document.getElementById('checklist-warn').style.display = 'none';
+  renderMonthlyTracker();
 </script>
 </body>
 </html>
